@@ -5,6 +5,11 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Initialize Lucide Vector Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
     // ─── Cursor Glow Effect ───
     const cursorGlow = document.getElementById('cursorGlow');
     let mouseX = 0, mouseY = 0;
@@ -285,6 +290,132 @@ document.addEventListener('DOMContentLoaded', () => {
             animateCounters(document);
         }, 1000);
     }, 300);
+
+    // ─── Proposta Toggle Switch ───
+    const proposalToggle = document.getElementById('proposalToggle');
+    const cardOpcaoA = document.getElementById('card-opcao-a');
+    const cardOpcaoB = document.getElementById('card-opcao-b');
+    const labelOpcaoA = document.getElementById('label-opcao-a');
+    const labelOpcaoB = document.getElementById('label-opcao-b');
+
+    if (proposalToggle) {
+        proposalToggle.addEventListener('change', () => {
+            if (proposalToggle.checked) {
+                cardOpcaoA.classList.remove('active');
+                cardOpcaoB.classList.add('active');
+                labelOpcaoA.classList.remove('active');
+                labelOpcaoA.style.color = 'var(--text-dark-secondary)';
+                labelOpcaoB.classList.add('active');
+                labelOpcaoB.style.color = 'var(--text-dark)';
+            } else {
+                cardOpcaoB.classList.remove('active');
+                cardOpcaoA.classList.add('active');
+                labelOpcaoB.classList.remove('active');
+                labelOpcaoB.style.color = 'var(--text-dark-secondary)';
+                labelOpcaoA.classList.add('active');
+                labelOpcaoA.style.color = 'var(--text-dark)';
+            }
+        });
+
+        // Clickable Labels
+        labelOpcaoA.addEventListener('click', () => {
+            if (proposalToggle.checked) {
+                proposalToggle.checked = false;
+                proposalToggle.dispatchEvent(new Event('change'));
+            }
+        });
+
+        labelOpcaoB.addEventListener('click', () => {
+            if (!proposalToggle.checked) {
+                proposalToggle.checked = true;
+                proposalToggle.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+
+    // ─── Scroll Progress Bar ───
+    const scrollProgressEl = document.createElement('div');
+    scrollProgressEl.className = 'scroll-progress';
+    document.body.prepend(scrollProgressEl);
+
+    function updateScrollProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        scrollProgressEl.style.width = progress + '%';
+    }
+
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+
+    // ─── Proposal Card Mouse Tracking (Radial Glow) ───
+    const proposalCards = document.querySelectorAll('.proposal-card');
+    proposalCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            card.style.setProperty('--mouse-x', x + '%');
+            card.style.setProperty('--mouse-y', y + '%');
+        });
+    });
+
+    // ─── Enhanced Stagger Observer for all grids ───
+    const staggerObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const children = entry.target.children;
+                Array.from(children).forEach((child, i) => {
+                    child.style.transitionDelay = (i * 0.1) + 's';
+                    child.classList.add('stagger-visible');
+                });
+                staggerObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.b2b-grid, .fb-strategy-grid, .proposals-grid, .proposal-benefits-grid, .reporting-cards').forEach(grid => {
+        staggerObserver.observe(grid);
+    });
+
+    // ─── Magnetic Button Hover Effect ───
+    document.querySelectorAll('.btn-primary, .btn-large').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+            btn.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => { btn.style.transition = ''; }, 400);
+        });
+    });
+
+    // ─── Section Parallax Depth ───
+    const parallaxSections = document.querySelectorAll('.section-header');
+    function updateParallax() {
+        parallaxSections.forEach(header => {
+            const rect = header.getBoundingClientRect();
+            const centerY = rect.top + rect.height / 2;
+            const viewportCenter = window.innerHeight / 2;
+            const offset = (centerY - viewportCenter) * 0.03;
+            header.style.transform = `translateY(${offset}px)`;
+        });
+    }
+    window.addEventListener('scroll', updateParallax, { passive: true });
+
+    // ─── Typing cursor blink on stat-text ───
+    const statTexts = document.querySelectorAll('.stat-text');
+    statTexts.forEach(st => {
+        st.style.borderRight = '2px solid var(--accent-red)';
+        st.style.animation = 'statTextReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards';
+        setTimeout(() => {
+            st.style.borderRight = 'none';
+        }, 3000);
+    });
 
     console.log('%c🚀 SM Creative — Proposta Head of Growth & Marketing', 
         'background: #E63946; color: white; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 4px;');
