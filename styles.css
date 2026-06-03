@@ -3137,12 +3137,12 @@ body:hover .cursor-glow {
 }
 
 .proposal-price-box {
-    margin-bottom: 24px;
+    margin-top: 20px;
     display: flex;
     align-items: baseline;
     gap: 6px;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 20px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 20px;
 }
 
 .proposal-price {
@@ -3414,21 +3414,20 @@ input:checked + .slider:before {
 /* ─── Section Title Shimmer ─── */
 .section-title {
     position: relative;
-    display: inline-block;
+    display: block;
 }
 
 .section-dark .section-title::after {
     content: '';
     position: absolute;
     bottom: -6px;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
     width: 60px;
     height: 3px;
     background: var(--gradient-red);
     border-radius: 2px;
-    animation: titleUnderline 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    transform-origin: left;
-    transform: scaleX(0);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .section-light .section-title::after {
@@ -3447,11 +3446,6 @@ input:checked + .slider:before {
 
 .animate-on-scroll.animated .section-title::after,
 .animated .section-title::after {
-    transform: scaleX(1);
-}
-
-.section-light .animate-on-scroll.animated .section-title::after,
-.section-light .animated .section-title::after {
     transform: translateX(-50%) scaleX(1);
 }
 
